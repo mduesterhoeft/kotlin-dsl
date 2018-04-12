@@ -17,11 +17,9 @@
 package org.gradle.kotlin.dsl
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.Incubating
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.model.ObjectFactory
 
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.dsl.RepositoryHandler
@@ -36,10 +34,6 @@ import org.gradle.api.internal.file.FileCollectionInternal
 
 import org.gradle.api.plugins.Convention
 import org.gradle.api.plugins.PluginAware
-
-import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.Property
-import org.gradle.api.provider.PropertyState
 
 import org.gradle.api.tasks.TaskContainer
 
@@ -183,37 +177,6 @@ fun Project.dependencies(configuration: DependencyHandlerScope.() -> Unit) =
  */
 operator fun Project.provideDelegate(any: Any?, property: KProperty<*>): PropertyDelegate =
     propertyDelegateFor(this, property)
-
-
-/**
- * Creates a [Property] that holds values of the given type [T].
- *
- * @see [ObjectFactory.property]
- */
-@Incubating
-inline fun <reified T> ObjectFactory.property(): Property<T> =
-    property(T::class.java)
-
-
-/**
- * Creates a [ListProperty] that holds values of the given type [T].
- *
- * @see [ObjectFactory.listProperty]
- */
-@Incubating
-inline fun <reified T> ObjectFactory.listProperty(): ListProperty<T> =
-    listProperty(T::class.java)
-
-
-/**
- * Creates a [PropertyState] that holds values of the given type [T].
- *
- * @see [Project.property]
- */
-@Incubating
-@Deprecated("Will be removed in 1.0", replaceWith = ReplaceWith("objects.property()"))
-inline fun <reified T> Project.property(): PropertyState<T> =
-    property(T::class.java)
 
 
 /**

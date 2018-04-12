@@ -36,22 +36,6 @@ inline fun <reified T : Any> Convention.getPluginByName(name: String): T =
     } ?: throw IllegalStateException("A convention named '$name' could not be found.")
 
 
-inline fun <reified T : Any> Convention.getPlugin() =
-    getPlugin(T::class)
-
-
-fun <T : Any> Convention.getPlugin(conventionType: KClass<T>): T =
-    getPlugin(conventionType.java)
-
-
-inline fun <reified T : Any> Convention.findPlugin() =
-    findPlugin(T::class)
-
-
-fun <T : Any> Convention.findPlugin(conventionType: KClass<T>): T? =
-    findPlugin(conventionType.java)
-
-
 /**
  * Evaluates the given [function] against the convention plugin of the given [conventionType].
  *

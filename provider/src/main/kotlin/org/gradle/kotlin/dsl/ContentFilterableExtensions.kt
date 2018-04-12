@@ -30,30 +30,6 @@ import kotlin.reflect.KClass
  * Examples:
  *
  * ```
- * filter<StripJavaComments>()
- * filter<com.mycompany.project.CustomFilter>()
- * filter<HeadFilter>("lines" to 25, "skip" to 2)
- * filter<ReplaceTokens>("tokens" to mapOf("copyright" to "2009", "version" to "2.3.1"))
- * ```
- *
- * @param T type of the filter to add
- * @param properties map of filter properties
- * @return this
- */
-inline fun <reified T : FilterReader> ContentFilterable.filter(vararg properties: Pair<String, Any?>) =
-    if (properties.isEmpty()) filter(T::class.java)
-    else filter(mapOf(*properties), T::class.java)
-
-
-/**
- * Adds a content filter to be used during the copy.
- * Multiple calls add additional filters to the filter chain.
- * Each filter should implement [FilterReader].
- * Import `org.apache.tools.ant.filters.*` for access to all the standard Ant filters.
- *
- * Examples:
- *
- * ```
  * filter<HeadFilter>(mapOf("lines" to 25, "skip" to 2))
  * filter<ReplaceTokens>(mapOf("tokens" to mapOf("copyright" to "2009", "version" to "2.3.1")))
  * ```
@@ -65,30 +41,6 @@ inline fun <reified T : FilterReader> ContentFilterable.filter(vararg properties
 inline fun <reified T : FilterReader> ContentFilterable.filter(properties: Map<String, Any?>) =
     if (properties.isEmpty()) filter(T::class.java)
     else filter(properties, T::class.java)
-
-
-/**
- * Adds a content filter to be used during the copy.
- * Multiple calls add additional filters to the filter chain.
- * Each filter should implement [FilterReader].
- * Import `org.apache.tools.ant.filters.*` for access to all the standard Ant filters.
- *
- * Examples:
- *
- * ```
- * filter(StripJavaComments::class)
- * filter(com.mycompany.project.CustomFilter::class)
- * filter(HeadFilter::class, "lines" to 25, "skip" to 2)
- * filter(ReplaceTokens::class, "tokens" to mapOf("copyright" to "2009", "version" to "2.3.1"))
- * ```
- *
- * @param filterType type of the filter to add
- * @param properties map of filter properties
- * @return this
- */
-fun <T : FilterReader> ContentFilterable.filter(filterType: KClass<T>, vararg properties: Pair<String, Any?>) =
-    if (properties.isEmpty()) filter(filterType.java)
-    else filter(mapOf(*properties), filterType.java)
 
 
 /**
