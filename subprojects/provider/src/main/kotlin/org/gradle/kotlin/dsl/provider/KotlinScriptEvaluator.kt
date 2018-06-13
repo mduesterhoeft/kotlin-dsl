@@ -26,6 +26,8 @@ import org.gradle.cache.CacheOpenException
 import org.gradle.cache.PersistentCache
 import org.gradle.cache.internal.CacheKeyBuilder
 
+import org.gradle.configuration.ConfigurationTargetIdentifier
+
 import org.gradle.groovy.scripts.ScriptSource
 import org.gradle.groovy.scripts.internal.ScriptSourceHasher
 
@@ -34,6 +36,8 @@ import org.gradle.internal.classpath.ClassPath
 import org.gradle.internal.classpath.DefaultClassPath
 import org.gradle.internal.hash.HashCode
 import org.gradle.internal.logging.progress.ProgressLoggerFactory
+import org.gradle.internal.operations.BuildOperationExecutor
+import org.gradle.internal.scripts.operations.CompileScriptBuildOperation
 
 import org.gradle.kotlin.dsl.cache.ScriptCache
 
@@ -84,7 +88,8 @@ class StandardKotlinScriptEvaluator(
     private val classPathHasher: ClasspathHasher,
     private val scriptCache: ScriptCache,
     private val implicitImports: ImplicitImports,
-    private val progressLoggerFactory: ProgressLoggerFactory
+    private val progressLoggerFactory: ProgressLoggerFactory,
+    private val buildOperationExecutor: BuildOperationExecutor
 ) : KotlinScriptEvaluator {
 
     override fun evaluate(
@@ -98,7 +103,7 @@ class StandardKotlinScriptEvaluator(
     ) {
         withOptions(options) {
 
-            interpreter.eval(
+            Interpreter(InterpreterHost(ConfigurationTargetIdentifier.of(target))).eval(
                 target,
                 scriptSource,
                 scriptSourceHasher.hash(scriptSource),
@@ -130,12 +135,22 @@ class StandardKotlinScriptEvaluator(
     }
 
     private
-    val interpreter by lazy {
-        Interpreter(InterpreterHost())
-    }
+    inner class InterpreterHost(val targetIdentifier: ConfigurationTargetIdentifier?) : Interpreter.Host {
 
-    private
-    inner class InterpreterHost : Interpreter.Host {
+        override fun runCompileBuildOperation(scriptPath: String, stage: String, action: () -> String): String {
+            lateinit var result: String
+            buildOperationExecutor.run(
+                CompileScriptBuildOperation(
+                    Runnable { result = action() },
+                    "Compiling Kotlin script",
+                    targetIdentifier?.buildPath,
+                    scriptPath,
+                    "Kotlin",
+                    stage
+                )
+            )
+            return result
+        }
 
         override fun setupEmbeddedKotlinFor(scriptHost: KotlinScriptHost<*>) {
             setupEmbeddedKotlinForBuildscript(scriptHost.scriptHandler)
