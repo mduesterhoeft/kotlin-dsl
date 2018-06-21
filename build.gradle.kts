@@ -45,9 +45,17 @@ val publishedProjects =
         project(":tooling-models"),
         project(":tooling-builders"))
 
+
+val kotlinCompilerClasspath by configurations.creating
+
 // For documentation and meaningful `./gradlew dependencies` output
 val distribution by configurations.creating
 dependencies {
+
+    kotlinCompilerClasspath(
+        kotlin("compiler", version = embeddedKotlinVersion)
+    )
+
     publishedProjects.forEach {
         distribution(it)
     }

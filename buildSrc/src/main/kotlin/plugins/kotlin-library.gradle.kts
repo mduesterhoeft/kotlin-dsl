@@ -39,6 +39,9 @@ tasks {
                 "-Xjsr305=strict",
                 "-Xskip-runtime-version-check")
         }
+
+        compilerClasspath =
+            project.rootProject.configurations["kotlinCompilerClasspath"].files.toList()
     }
 
     withType<Test> {
