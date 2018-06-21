@@ -24,7 +24,6 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 
 plugins {
     kotlin("jvm")
-    id("org.gradle.kotlin.ktlint-convention")
 }
 
 kotlin {

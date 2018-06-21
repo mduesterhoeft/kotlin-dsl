@@ -1,29 +1,11 @@
 import org.gradle.kotlin.dsl.plugins.precompiled.PrecompiledScriptPlugins
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-buildscript {
-
-    val pluginsExperiments = "gradle.plugin.org.gradle.kotlin:gradle-kotlin-dsl-plugins-experiments:0.1.8"
-
-    dependencies {
-        classpath(pluginsExperiments)
-    }
-
-    project.dependencies {
-        "compile"(pluginsExperiments)
-    }
-
-    configure(listOf(repositories, project.repositories)) {
-        gradlePluginPortal()
-    }
-}
-
 plugins {
     `java-gradle-plugin`
     `kotlin-dsl`
 }
 
-apply(plugin = "org.gradle.kotlin.ktlint-convention")
 apply<PrecompiledScriptPlugins>()
 
 tasks.withType<KotlinCompile> {
@@ -48,3 +30,8 @@ dependencies {
     testCompile("junit:junit:4.12")
     testCompile(gradleTestKit())
 }
+
+repositories {
+    gradlePluginPortal()
+}
+
