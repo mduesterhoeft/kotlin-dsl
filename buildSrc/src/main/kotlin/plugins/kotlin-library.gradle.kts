@@ -59,7 +59,7 @@ tasks {
             true)
 
         // sets the memory limits for test workers
-        jvmArgs("-Xms64m", "-Xmx128m")
+//        jvmArgs("-Xms64m", "-Xmx512m")
     }
 }
 
